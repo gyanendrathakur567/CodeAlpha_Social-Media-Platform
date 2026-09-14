@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ConnectHub - Community Feed</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            background: #f5f7ff;
+            color: #111827;
+            min-height: 100vh;
+        }
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        .topbar {
+            height: 72px;
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 35px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand {
+            color: #4f46e5;
+            font-size: 25px;
+            font-weight: 800;
+            letter-spacing: -0.8px;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .online-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .online-dot {
+            width: 9px;
+            height: 9px;
+            background: #22c55e;
+            border-radius: 50%;
+        }
+
+        .user-name {
+            color: #374151;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            border: none;
+            background: #eef2ff;
+            color: #4f46e5;
+            padding: 10px 17px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: #e0e7ff;
+        }
+
+
+        /* =========================
+           MAIN LAYOUT
+        ========================= */
+
+        .layout {
+            max-width: 1250px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 250px minmax(0, 650px) 250px;
+            gap: 25px;
+            padding: 30px 20px;
+        }
+
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .sidebar {
+            position: sticky;
+            top: 102px;
+            height: fit-content;
+        }
+
+        .profile-card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 18px;
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(30, 41, 59, 0.05);
+        }
+
+        .avatar {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 25px;
+            font-weight: 700;
+        }
+
+        .profile-card h3 {
+            font-size: 17px;
+            margin-bottom: 5px;
+            color: #111827;
+        }
+
+        .profile-card p {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .menu {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 18px;
+            margin-top: 18px;
+            padding: 10px;
+            box-shadow: 0 8px 25px rgba(30, 41, 59, 0.05);
+        }
+
+        .menu-item {
+            padding: 13px 15px;
+            border-radius: 10px;
+            color: #4b5563;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .menu-item.active {
+            background: #eef2ff;
+            color: #4f46e5;
+        }
+
+
+        /* =========================
+           FEED
+        ========================= */
+
+        .feed-header {
+            margin-bottom: 20px;
+        }
+
+        .feed-header h1 {
+            font-size: 28px;
+            color: #111827;
+            margin-bottom: 5px;
+        }
+
+        .feed-header p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+
+        /* CREATE POST */
+
+        .create-post {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 22px;
+            box-shadow: 0 8px 25px rgba(30, 41, 59, 0.05);
+        }
+
+        .create-top {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .small-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: #eef2ff;
+            color: #4f46e5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .create-input {
+            flex: 1;
+            border: 1px solid #e5e7eb;
+            background: #f9fafb;
+            padding: 13px 15px;
+            border-radius: 12px;
+            color: #9ca3af;
+            font-size: 14px;
+        }
+
+        .create-bottom {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .post-btn {
+            border: none;
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            color: white;
+            padding: 11px 22px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+
+        /* =========================
+           POST CARD
+        ========================= */
+
+        .post-card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 18px;
+            padding: 22px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(30, 41, 59, 0.05);
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .post-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .post-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4f46e5, #818cf8);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .post-user h3 {
+            font-size: 15px;
+            color: #111827;
+        }
+
+        .post-user span {
+            display: block;
+            font-size: 12px;
+            color: #9ca3af;
+            margin-top: 3px;
+        }
+
+        .post-menu {
+            color: #9ca3af;
+            font-size: 20px;
+        }
+
+        .post-content {
+            color: #374151;
+            font-size: 15px;
+            line-height: 1.7;
+            margin-bottom: 18px;
+        }
+
+        .post-actions {
+            border-top: 1px solid #f0f0f0;
+            padding-top: 14px;
+            display: flex;
+            gap: 25px;
+        }
+
+        .action-btn {
+            border: none;
+            background: transparent;
+            color: #6b7280;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .action-btn:hover {
+            color: #4f46e5;
+        }
+
+
+        /* =========================
+           RIGHT SIDEBAR
+        ========================= */
+
+        .right-sidebar {
+            position: sticky;
+            top: 102px;
+            height: fit-content;
+        }
+
+        .info-card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 18px;
+            padding: 22px;
+            margin-bottom: 18px;
+            box-shadow: 0 8px 25px rgba(30, 41, 59, 0.05);
+        }
+
+        .info-card h3 {
+            font-size: 16px;
+            margin-bottom: 18px;
+            color: #111827;
+        }
+
+        .suggestion {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .suggestion:last-child {
+            margin-bottom: 0;
+        }
+
+        .suggestion-user {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .suggestion-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #eef2ff;
+            color: #4f46e5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .suggestion-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .follow-btn {
+            border: none;
+            background: #eef2ff;
+            color: #4f46e5;
+            padding: 7px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .about-text {
+            color: #6b7280;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+
+        /* =========================
+           EMPTY STATE
+        ========================= */
+
+        .empty-state {
+            text-align: center;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 18px;
+            padding: 50px 20px;
+            color: #6b7280;
+        }
+
+        .empty-state h3 {
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 1050px) {
+
+            .layout {
+                grid-template-columns: 210px minmax(0, 1fr);
+            }
+
+            .right-sidebar {
+                display: none;
+            }
+        }
+
+
+        @media (max-width: 750px) {
+
+            .topbar {
+                padding: 0 18px;
+            }
+
+            .online-status {
+                display: none;
+            }
+
+            .user-name {
+                display: none;
+            }
+
+            .layout {
+                display: block;
+                padding: 20px 15px;
+            }
+
+            .sidebar {
+                position: static;
+                margin-bottom: 20px;
+            }
+
+            .profile-card {
+                display: flex;
+                align-items: center;
+                text-align: left;
+                gap: 14px;
+                padding: 15px;
+            }
+
+            .avatar {
+                width: 50px;
+                height: 50px;
+                margin: 0;
+                font-size: 18px;
+            }
+
+            .menu {
+                display: none;
+            }
+
+            .feed-header h1 {
+                font-size: 24px;
+            }
+        }
+
+
+        @media (max-width: 450px) {
+
+            .brand {
+                font-size: 21px;
+            }
+
+            .logout-btn {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+
+            .post-card,
+            .create-post {
+                padding: 16px;
+            }
+
+            .post-actions {
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+
+
+<body>
+
+    <!-- =========================
+         TOP BAR
+    ========================= -->
+
+    <header class="topbar">
+
+        <div class="brand">
+            ConnectHub
+        </div>
+
+        <div class="topbar-right">
+
+            <div class="online-status">
+                <span class="online-dot"></span>
+                Online
+            </div>
+
+            <div class="user-name" id="top-username">
+                User
+            </div>
+
+            <button
+                class="logout-btn"
+                id="logout-btn"
+            >
+                Logout
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- =========================
+         MAIN LAYOUT
+    ========================= -->
+
+    <main class="layout">
+
+
+        <!-- LEFT SIDEBAR -->
+
+        <aside class="sidebar">
+
+            <div class="profile-card">
+
+                <div
+                    class="avatar"
+                    id="profile-avatar"
+                >
+                    U
+                </div>
+
+                <div>
+                    <h3 id="profile-name">
+                        User
+                    </h3>
+
+                    <p>
+                        ConnectHub Member
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="menu">
+
+                <div class="menu-item active">
+                    Community Feed
+                </div>
+
+                <div class="menu-item">
+                    My Profile
+                </div>
+
+                <div class="menu-item">
+                    Discover
+                </div>
+
+                <div class="menu-item">
+                    Notifications
+                </div>
+
+            </div>
+
+        </aside>
+
+
+        <!-- MAIN FEED -->
+
+        <section class="feed">
+
+            <div class="feed-header">
+
+                <h1>
+                    Community Feed
+                </h1>
+
+                <p>
+                    See what's happening in your community.
+                </p>
+
+            </div>
+
+
+            <!-- CREATE POST -->
+
+            <div class="create-post">
+
+                <div class="create-top">
+
+                    <div
+                        class="small-avatar"
+                        id="create-avatar"
+                    >
+                        U
+                    </div>
+
+                    <div class="create-input">
+                        Share something with the community...
+                    </div>
+
+                </div>
+
+                <div class="create-bottom">
+
+                    <button
+                        class="post-btn"
+                        id="create-post-btn"
+                    >
+                        Create Post
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- POSTS WILL BE LOADED HERE -->
+
+            <div id="posts-container">
+
+                <div class="empty-state">
+
+                    <h3>
+                        Loading posts...
+                    </h3>
+
+                    <p>
+                        Please wait while we load your community feed.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- RIGHT SIDEBAR -->
+
+        <aside class="right-sidebar">
+
+
+            <div class="info-card">
+
+                <h3>
+                    People to Connect
+                </h3>
+
+
+                <div class="suggestion">
+
+                    <div class="suggestion-user">
+
+                        <div class="suggestion-avatar">
+                            A
+                        </div>
+
+                        <div class="suggestion-name">
+                            Alex
+                        </div>
+
+                    </div>
+
+                    <button class="follow-btn">
+                        Connect
+                    </button>
+
+                </div>
+
+
+                <div class="suggestion">
+
+                    <div class="suggestion-user">
+
+                        <div class="suggestion-avatar">
+                            R
+                        </div>
+
+                        <div class="suggestion-name">
+                            Rahul
+                        </div>
+
+                    </div>
+
+                    <button class="follow-btn">
+                        Connect
+                    </button>
+
+                </div>
+
+
+                <div class="suggestion">
+
+                    <div class="suggestion-user">
+
+                        <div class="suggestion-avatar">
+                            S
+                        </div>
+
+                        <div class="suggestion-name">
+                            Sarah
+                        </div>
+
+                    </div>
+
+                    <button class="follow-btn">
+                        Connect
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <h3>
+                    About ConnectHub
+                </h3>
+
+                <p class="about-text">
+                    ConnectHub is a simple social platform
+                    designed to help people connect, share
+                    ideas, and interact with their community.
+                </p>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <p class="about-text">
+                    © 2026 ConnectHub
+                    <br>
+                    Built for the CodeAlpha project.
+                </p>
+
+            </div>
+
+        </aside>
+
+    </main>
+
+
+    <!-- =========================
+         EXISTING APP SCRIPT
+    ========================= -->
+
+    <script src="app.js"></script>
+
+
+    <!-- =========================
+         FEED PAGE SCRIPT
+    ========================= -->
+
+    <script>
+
+        const username =
+            localStorage.getItem("username");
+
+
+        /* =========================
+           LOGIN CHECK
+        ========================= */
+
+        if (!username) {
+
+            window.location.href = "login.html";
+
+        }
+
+
+        /* =========================
+           USER DISPLAY
+        ========================= */
+
+        if (username) {
+
+            const firstLetter =
+                username.charAt(0).toUpperCase();
+
+
+            document.getElementById(
+                "top-username"
+            ).textContent = username;
+
+
+            document.getElementById(
+                "profile-name"
+            ).textContent = username;
+
+
+            document.getElementById(
+                "profile-avatar"
+            ).textContent = firstLetter;
+
+
+            document.getElementById(
+                "create-avatar"
+            ).textContent = firstLetter;
+
+        }
+
+
+        /* =========================
+           LOGOUT
+        ========================= */
+
+        document
+            .getElementById("logout-btn")
+            .addEventListener("click", () => {
+
+                localStorage.removeItem("username");
+
+                window.location.href =
+                    "login.html";
+
+            });
+
+
+        /* =========================
+           CREATE POST
+        ========================= */
+
+        document
+            .getElementById("create-post-btn")
+            .addEventListener("click", async () => {
+
+                const content =
+                    prompt("What would you like to share?");
+
+
+                if (!content || !content.trim()) {
+
+                    return;
+
+                }
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            "/api/posts/create",
+                            {
+                                method: "POST",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                body: JSON.stringify({
+                                    username: username,
+                                    content: content.trim()
+                                })
+                            }
+                        );
+
+
+                    const data =
+                        await response.json();
+
+
+                    if (response.ok) {
+
+                        loadPosts();
+
+                    } else {
+
+                        alert(
+                            data.message ||
+                            "Unable to create post."
+                        );
+
+                    }
+
+                } catch (error) {
+
+                    console.error(error);
+
+                    alert(
+                        "Unable to connect to the server."
+                    );
+
+                }
+
+            });
+
+
+        /* =========================
+           LOAD POSTS
+        ========================= */
+
+        async function loadPosts() {
+
+            const container =
+                document.getElementById(
+                    "posts-container"
+                );
+
+
+            try {
+
+                const response =
+                    await fetch("/api/posts");
+
+
+                const posts =
+                    await response.json();
+
+
+                if (!posts || posts.length === 0) {
+
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <h3>No posts yet</h3>
+                            <p>Be the first person to share something with the community.</p>
+                        </div>
+                    `;
+
+                    return;
+
+                }
+
+
+                container.innerHTML = "";
+
+
+                posts.forEach(post => {
+
+                    const name =
+                        post.username ||
+                        post.user ||
+                        "User";
+
+
+                    const content =
+                        post.content ||
+                        "";
+
+
+                    const likes =
+                        post.likes ||
+                        0;
+
+
+                    const comments =
+                        post.comments ||
+                        [];
+
+
+                    const firstLetter =
+                        name.charAt(0).toUpperCase();
+
+
+                    const postElement =
+                        document.createElement("article");
+
+
+                    postElement.className =
+                        "post-card";
+
+
+                    postElement.innerHTML = `
+
+                        <div class="post-header">
+
+                            <div class="post-user">
+
+                                <div class="post-avatar">
+                                    ${firstLetter}
+                                </div>
+
+                                <div>
+
+                                    <h3>
+                                        ${escapeHTML(name)}
+                                    </h3>
+
+                                    <span>
+                                        ConnectHub member
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                            <div class="post-menu">
+                                ...
+                            </div>
+
+                        </div>
+
+
+                        <div class="post-content">
+                            ${escapeHTML(content)}
+                        </div>
+
+
+                        <div class="post-actions">
+
+                            <button
+                                class="action-btn like-btn"
+                                data-id="${post.id}"
+                            >
+                                Like ${likes}
+                            </button>
+
+                            <button
+                                class="action-btn comment-btn"
+                                data-id="${post.id}"
+                            >
+                                Comment ${comments.length}
+                            </button>
+
+                        </div>
+
+                    `;
+
+
+                    container.appendChild(
+                        postElement
+                    );
+
+                });
+
+
+                attachPostActions();
+
+            } catch (error) {
+
+                console.error(
+                    "Error loading posts:",
+                    error
+                );
+
+
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>Unable to load posts</h3>
+                        <p>Make sure the Node.js server is running.</p>
+                    </div>
+                `;
+
+            }
+
+        }
+
+
+        /* =========================
+           POST ACTIONS
+        ========================= */
+
+        function attachPostActions() {
+
+            document
+                .querySelectorAll(".like-btn")
+                .forEach(button => {
+
+                    button.addEventListener(
+                        "click",
+                        async () => {
+
+                            const postId =
+                                button.dataset.id;
+
+
+                            try {
+
+                                const response =
+                                    await fetch(
+                                        "/api/posts/like",
+                                        {
+                                            method: "POST",
+
+                                            headers: {
+                                                "Content-Type":
+                                                    "application/json"
+                                            },
+
+                                            body:
+                                                JSON.stringify({
+                                                    postId:
+                                                        postId,
+                                                    username:
+                                                        username
+                                                })
+                                        }
+                                    );
+
+
+                                if (response.ok) {
+
+                                    loadPosts();
+
+                                }
+
+                            } catch (error) {
+
+                                console.error(error);
+
+                            }
+
+                        }
+                    );
+
+                });
+
+
+            document
+                .querySelectorAll(".comment-btn")
+                .forEach(button => {
+
+                    button.addEventListener(
+                        "click",
+                        async () => {
+
+                            const postId =
+                                button.dataset.id;
+
+
+                            const comment =
+                                prompt(
+                                    "Write a comment:"
+                                );
+
+
+                            if (
+                                !comment ||
+                                !comment.trim()
+                            ) {
+
+                                return;
+
+                            }
+
+
+                            try {
+
+                                const response =
+                                    await fetch(
+                                        "/api/posts/comment",
+                                        {
+                                            method: "POST",
+
+                                            headers: {
+                                                "Content-Type":
+                                                    "application/json"
+                                            },
+
+                                            body:
+                                                JSON.stringify({
+                                                    postId:
+                                                        postId,
+
+                                                    username:
+                                                        username,
+
+                                                    comment:
+                                                        comment.trim()
+                                                })
+                                        }
+                                    );
+
+
+                                if (response.ok) {
+
+                                    loadPosts();
+
+                                }
+
+                            } catch (error) {
+
+                                console.error(error);
+
+                            }
+
+                        }
+                    );
+
+                });
+
+        }
+
+
+        /* =========================
+           HTML SECURITY
+        ========================= */
+
+        function escapeHTML(text) {
+
+            const div =
+                document.createElement("div");
+
+            div.textContent = text;
+
+            return div.innerHTML;
+
+        }
+
+
+        /* =========================
+           START
+        ========================= */
+
+        loadPosts();
+
+    </script>
+
+</body>
+
+</html>
